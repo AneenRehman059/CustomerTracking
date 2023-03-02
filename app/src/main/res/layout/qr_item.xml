@@ -14,18 +14,18 @@
             android:id="@+id/txt_catego"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="Rose Petal"
+            android:text="@string/rose_petal"
             android:textColor="@color/black"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_30sdp"
-            android:text="Scan Freezer QR" />
+            android:text="@string/scan_freezer_qr" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,6 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/qr_code"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -63,5 +64,4 @@
             android:text="" />
 
     </androidx.cardview.widget.CardView>
-
 </LinearLayout>

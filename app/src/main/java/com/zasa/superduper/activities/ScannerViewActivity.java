@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -26,7 +27,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class ScannerViewActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
     Context context;
     ProgressDialog progressDialog;
-    String code;
+    public static TextView code;
     View view;
     ZXingScannerView zXingScannerView;
     ImageView flashOn, flashOff;
@@ -51,12 +52,13 @@ public class ScannerViewActivity extends AppCompatActivity implements ZXingScann
 
     @Override
     public void handleResult(Result rawResult) {
-        code = rawResult.getText();
-        Toast.makeText(context, "" + code, Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(context, QuestionActivity.class);
-        intent.putExtra("code", code);
-        startActivity(intent);
+        code.setText(rawResult.getText());
+//        Toast.makeText(context, "" + code, Toast.LENGTH_SHORT).show();
+//
+//        Intent intent = new Intent(context, QuestionActivity.class);
+//        intent.putExtra("code", code);
+//        startActivity(intent);
+        finish();
     }
 
     @Override

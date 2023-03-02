@@ -27,6 +27,8 @@
     <string name="Interstitial_add_unit_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="banner_ad_id"></string>
     <string name="title_activity_start_day">StartDay_Activity</string>
+    <string name="scan_freezer_qr">Scan Freezer QR</string>
+    <string name="rose_petal">Rose Petal</string>
 
 </resources>
 

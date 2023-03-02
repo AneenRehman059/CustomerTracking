@@ -1,16 +1,18 @@
 package com.zasa.superduper.activities;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,136 +20,198 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.journeyapps.barcodescanner.CaptureActivity;
-import com.zasa.superduper.BuildConfig;
+import com.github.florent37.runtimepermission.RuntimePermission;
+import com.zasa.superduper.Adapters.AdapterShowImages;
+import com.zasa.superduper.MyFunctions;
 import com.zasa.superduper.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 public class CaptureImageActivity extends AppCompatActivity {
-    public static final int CAMERA_PERM_CODE = 101;
-    public static final int CAMERA_REQUEST_CODE = 102;
-    ImageView selectedImage;
-    Button cameraBtn;
-    String currentPhotoPath;
+    //    public static final int CAMERA_PERM_CODE = 101;
+//    public static final int CAMERA_REQUEST_CODE = 102;
+//    private static  TAG = "CaptureImageActivity";
+    private Button btnAdd;
+    private RecyclerView recyclerView;
+    private final int REQUEST_CAMERA = 1234;
+    private final int REQUEST_GALLERY = 5464;
+    private static MyFunctions myFunctions;
+
+    private static String imagePath = "";
+    private ArrayList<String> arrayList = new ArrayList<>();
+    static AdapterShowImages adapterShowImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_item);
+        btnAdd = findViewById(R.id.btn_captureImage);
+        recyclerView = findViewById(R.id.item_images_rcv);
+        myFunctions = new MyFunctions(this);
 
-        selectedImage = findViewById(R.id.item_iv);
-        cameraBtn = findViewById(R.id.btn_capture_image);
-
-//        cameraBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                verifyPermissions();
-//            }
+//        btnAdd.setOnClickListener(view -> {
+//            getImage();
 //        });
+        getImage();
+        populateList();
 
-        verifyPermissions();
     }
 
-    private void verifyPermissions() {
-        String[] permissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                android.Manifest.permission.CAMERA};
+    private void getImage() {
+        final CharSequence[] items;
+        try {
+            items = new CharSequence[]{"Take Photo", "Choose Image", "Cancel"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(CaptureImageActivity.this);
+            builder.setCancelable(false);
+            builder.setTitle("Select Image");
+            builder.setItems(items, (dialogInterface, i) -> {
+                if (items[i].equals("Take Photo")) {
+                    RuntimePermission.askPermission(this)
+                            .request(Manifest.permission.CAMERA)
+                            .onAccepted(result -> {
+                                takePicture();
+                            })
+                            .onDenied(result -> {
+                                new android.app.AlertDialog.Builder(this)
+                                        .setMessage("Please accept our permissions")
+                                        .setPositiveButton("yes", (dialog1, which) -> result.askAgain()) // ask again
+                                        .setNegativeButton("no", (dialog1, which) -> dialog1.dismiss())
+                                        .show();
+                            })
+                            .ask();
+                } else if (items[i].equals("Choose Image")) {
+                    RuntimePermission.askPermission(this)
+                            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .onAccepted(result -> {
+                                onClickGallery();
+                            })
+                            .onDenied(result -> {
+                                new android.app.AlertDialog.Builder(this)
+                                        .setMessage("Please accept our permissions")
+                                        .setPositiveButton("yes", (dialog1, which) -> result.askAgain()) // ask again
+                                        .setNegativeButton("no", (dialog1, which) -> dialog1.dismiss())
+                                        .show();
+                            })
+                            .ask();
+                } else {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.show();
 
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[1]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[2]) == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntent();
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    permissions,
-                    CAMERA_PERM_CODE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERM_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
-            }
+    private void takePicture() {
+        try {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, myFunctions.setImageUri());
+            takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+        } catch (Exception e) {
+            Log.d("tag", "takeImageIssue " + e.toString());
         }
+    }
+
+
+    private void onClickGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/jpg");
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(intent, REQUEST_GALLERY);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                File f = new File(currentPhotoPath);
-                selectedImage.setImageURI(Uri.fromFile(f));
-                Log.d("tag", "ABsolute Url of Image is " + Uri.fromFile(f));
-
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(f);
-                mediaScanIntent.setData(contentUri);
-                this.sendBroadcast(mediaScanIntent);
-            }
-
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            new captureImageAsync().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, myFunctions.getImagePath());
+        } else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK) {
+            new captureImageAsync1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, myFunctions.getPath(data.getData(), this));
         }
+
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+    @SuppressLint("StaticFieldLeak")
+    public class captureImageAsync extends AsyncTask<String, Void, String> {
 
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
+        @Override
+        protected String doInBackground(String... strings) {
+            imagePath = strings[0];
             try {
-                photoFile = createImageFile();
-                Intent intent = new Intent(CaptureImageActivity.this,QuestionActivity.class);
-                startActivity(intent);
-            } catch (IOException ex) {
-
+                return myFunctions.getRightAngleImage(imagePath);
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
-                        BuildConfig.APPLICATION_ID + ".provider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
+            return imagePath;
+        }
 
-            }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // you can show progress bar here while image loading/fetching
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            getImagePathN(myFunctions.decodeFile(imagePath));
+
+            //Close progress bar
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+    @SuppressLint("StaticFieldLeak")
+    public class captureImageAsync1 extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            imagePath = strings[0];
+            try {
+                return myFunctions.getRightAngleImage(imagePath);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            return imagePath;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // you can show progress bar here
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            // setImageUsingSwitch(PubFun.decodeFile(imagePath));
+            getImagePathN(myFunctions.decodeFile(imagePath));
+
+            //Close progress bar
+
+        }
+    }
+
+    private void getImagePathN(Bitmap bitmap) {
+        Uri tempUri = myFunctions.getImageUri(this, bitmap);
+        String actualImagePath = myFunctions.getRealPathFromURI(tempUri, this);
+
+        Log.d("tag", "image path : " + actualImagePath);
+
+        adapterShowImages.updateList(actualImagePath);
+
+    }
+
+    private void populateList() {
+//        adapterShowImages = new AdapterShowImages(CaptureImageActivity.this, arrayList);
+//        recyclerView.setLayoutManager(new GridLayoutManager(CaptureImageActivity.this, 3));   //ctl+p to know parameters
+//        recyclerView.setAdapter(adapterShowImages);
     }
 }
