@@ -15,7 +15,7 @@
             android:id="@+id/lay1"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/secondary">
+            android:background="@color/secondary1">
 
             <ImageView
                 android:id="@+id/btn_back"

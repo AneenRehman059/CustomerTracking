@@ -1,10 +1,12 @@
 package com.zasa.superduper.Models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Question_Model {
+public class Question_Model implements Serializable {
     private String question_name;
     private  String qr_code;
+    private String answer;
     private ArrayList<String> arrayList ;
     private String type;
 
@@ -12,7 +14,8 @@ public class Question_Model {
         this.question_name = question_name;
         this.type = type;
         this.arrayList = new ArrayList<>();
-        this.qr_code = qr_code;
+        this.qr_code = "";
+        this.answer = "";
     }
 
     public String getQuestion_name() {
@@ -45,5 +48,13 @@ public class Question_Model {
 
     public void setQr_code(String qr_code) {
         this.qr_code = qr_code;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 }

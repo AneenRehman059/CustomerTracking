@@ -24,12 +24,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LUX"
+                android:textSize="@dimen/_16ssp"
+                android:fontFamily="@font/gilory_semibold"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/gilory_semibold"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="Take Pantene Shelf Picture" />
 
@@ -51,16 +54,7 @@
 
 
             </LinearLayout>
-            <!--            <ImageView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginTop="@dimen/_15sdp"-->
-            <!--               android:src=""-->
-            <!--                />-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"/>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/item_images_rcv"

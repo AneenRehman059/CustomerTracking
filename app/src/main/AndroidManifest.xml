@@ -32,6 +32,9 @@
         android:theme="@style/Theme.LoyaltyBunch"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.ShowQuestionListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.NumericActivity"
             android:exported="false" />
         <activity

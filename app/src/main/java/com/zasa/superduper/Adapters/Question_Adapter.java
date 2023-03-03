@@ -5,10 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +43,14 @@ import java.util.ArrayList;
 public class Question_Adapter extends RecyclerView.Adapter implements Question_Adapters {
     private String TAG = "context";
     private String imagePath = "";
+    SharedPreferences sharedPreferences;
+
+    private static final String SHARED_PREF_NAME = "mypref";
+
+    public ArrayList<Question_Model> getQuestionList() {
+        return questionList;
+    }
+
     ArrayList<Question_Model> questionList;
     Context context;
     AdapterShowImages adapterShowImages;
@@ -77,7 +88,7 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
         View view;
         if (viewType == 1) {
             view = layoutInflater.inflate(R.layout.textitem, parent, false);
-            return new ViewHolderText(view);
+            return new ViewHolderText(view, new MyCustomEditTextListener());
         } else if (viewType == 2) {
             view = layoutInflater.inflate(R.layout.image_item, parent, false);
             return new PicViewHolder(view);
@@ -96,8 +107,15 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
 //        holder.tv_question.setText(model.getQuestion_name());
 
         if (questionList.get(position).getType().equalsIgnoreCase("text")) {
+
+
             ViewHolderText viewHolderText = (ViewHolderText) holder;
             viewHolderText.txt_cate.setText(model.getQuestion_name());
+            // setTag object lay ga. is main hum position set karwain gay
+            viewHolderText.myCustomEditTextListener.updatePosition(position);
+//            viewHolderText.ed_number.setTag(position);
+            viewHolderText.ed_number.setText(model.getAnswer());
+
         } else if (questionList.get(position).getType().equalsIgnoreCase("picture")) {
             PicViewHolder viewHolderPic = (PicViewHolder) holder;
             viewHolderPic.txt_categ.setText(model.getQuestion_name());
@@ -119,23 +137,20 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
         } else if (questionList.get(position).getType().equalsIgnoreCase("qr")) {
             ViewHolderQr viewHolderQr = (ViewHolderQr) holder;
             viewHolderQr.txt_catego.setText(model.getQuestion_name());
-
+            viewHolderQr.qr_code.setText(model.getAnswer());
 
             viewHolderQr.btn_qr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     Intent intent = new Intent(context, ScannerViewActivity.class);
+                    ScannerViewActivity.questionModel = questionList.get(position);
                     ScannerViewActivity.code =viewHolderQr.qr_code;
                     context.startActivity(intent);
 
-                    viewHolderQr.qr_code.setText(questionList.get(position).getQr_code());
 
                 }
             });
-
-            Intent intent = ((Activity) context).getIntent();
-            intent.getStringExtra("code");
 
 
         } else {
@@ -298,12 +313,15 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
     class ViewHolderText extends RecyclerView.ViewHolder {
         EditText ed_number;
         TextView txt_cate;
+        MyCustomEditTextListener myCustomEditTextListener;
 
-        public ViewHolderText(@NonNull View itemView) {
+        public ViewHolderText(@NonNull View itemView , MyCustomEditTextListener myCustomEditTextListener1) {
             super(itemView);
 
             ed_number = itemView.findViewById(R.id.edt_enter_number);
             txt_cate = itemView.findViewById(R.id.txt_cate);
+            this.myCustomEditTextListener = myCustomEditTextListener1;
+            ed_number.addTextChangedListener(myCustomEditTextListener);
         }
     }
 
@@ -346,4 +364,31 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
             tv_question = itemView.findViewById(R.id.txt_categories);
         }
     }
+
+    // we make TextWatcher to be aware of the position it currently works with
+    // this way, once a new item is attached in onBindViewHolder, it will
+    // update current position MyCustomEditTextListener, reference to which is kept by ViewHolder
+    private class MyCustomEditTextListener implements TextWatcher {
+        private int text_position;
+
+        public void updatePosition(int position) {
+            this.text_position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            // no op
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            questionList.get(text_position).setAnswer( charSequence.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // no op
+        }
+    }
 }
+

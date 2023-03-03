@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.github.florent37.runtimepermission.RuntimePermission;
 import com.zasa.superduper.Adapters.AdapterShowImages;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 
 public class QuestionActivity extends AppCompatActivity implements MyCallBack {
     public static  AdapterShowImages selectedRow;
+    Button btn_submit;
 
     RecyclerView questionsRv;
     ArrayList<Question_Model> questionList = new ArrayList<>();
@@ -51,6 +53,7 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
         setContentView(R.layout.activity_question);
 
         questionsRv = findViewById(R.id.rv_question);
+        btn_submit = findViewById(R.id.btn_submit);
 
 
         getQuestionList();
@@ -72,11 +75,29 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
         questionList.add(new Question_Model("Pasta","qr"));
 
         Question_Adapter question_adapter = new Question_Adapter(questionList, this,this);
+
         questionsRv.setAdapter(question_adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         questionsRv.setLayoutManager(layoutManager);
 
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                ((Question_Adapter)questionsRv.getAdapter()).getQuestionList();
+                Intent intent = new Intent(QuestionActivity.this,ShowQuestionListActivity.class);
+                intent.putExtra("myList", ((Question_Adapter) questionsRv.getAdapter()).getQuestionList());
+                startActivity(intent);
+
+            }
+        });
+
     }
+
+//    public void onTopbuttonClick(View v){
+//        ((Question_Adapter)questionsRv.getAdapter()).getQuestionList();
+//        // yay agay activty main pass krain gay
+//
+//    }
 
     private void getImage() {
         myFunctions= new MyFunctions(this);

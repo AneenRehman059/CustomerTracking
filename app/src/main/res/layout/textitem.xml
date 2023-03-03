@@ -20,15 +20,20 @@
                 android:id="@+id/txt_cate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/_16ssp"
+                android:fontFamily="@font/gilory_semibold"
                 android:text="Rose Petal"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+               />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:text="" />
+                android:fontFamily="@font/gilory_semibold"
+                android:text="Product Number"
+                />
+
+
 
             <EditText
                 android:id="@+id/edt_enter_number"

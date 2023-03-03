@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:backgroundTint="@color/secondary"
+        android:backgroundTint="@color/secondary1"
         app:fabCradleMargin="5dp"
         app:fabCradleRoundedCornerRadius="15dp"
         app:fabCradleVerticalOffset="2dp">
@@ -110,15 +110,15 @@
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_qr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/ic_barcode_dialog"
-        app:borderWidth="@dimen/_2sdp"
-        app:layout_anchor="@id/bottom_app_bar"
-        app:maxImageSize="32dp" />
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab_qr"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:src="@drawable/ic_barcode_dialog"-->
+<!--        app:borderWidth="@dimen/_2sdp"-->
+<!--        app:layout_anchor="@id/bottom_app_bar"-->
+<!--        app:maxImageSize="32dp" />-->
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

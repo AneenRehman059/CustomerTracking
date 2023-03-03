@@ -58,7 +58,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         bottomNavigationView = findViewById(R.id.bottom_nav);
-        floatingActionButton = findViewById(R.id.fab_qr);
         header = navigationView.getHeaderView(0);
         bottomNavigationView.setBackground(null);
         headerUsername = header.findViewById(R.id.tv_haader_name);
@@ -73,12 +72,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         thread.start();
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(HomeActivity.this, "Under development", Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         bottomNavigationView.getMenu().getItem(2).setEnabled(false);
         fragments.add(new HomeFragment());

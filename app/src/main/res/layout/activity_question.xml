@@ -16,7 +16,7 @@
             android:id="@+id/lay1"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/secondary">
+            android:background="@color/secondary1">
 
             <ImageView
                 android:id="@+id/btn_back"
@@ -27,6 +27,15 @@
                 android:padding="@dimen/_8sdp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_btn_back" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_submit"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_toRightOf="@id/house_header_detail"
+                android:text="Submit"/>
 
             <TextView
                 android:id="@+id/house_header_detail"
@@ -41,6 +50,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold">
             </TextView>
+
 
         </RelativeLayout>
 
