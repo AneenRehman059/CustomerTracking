@@ -11,39 +11,43 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.zasa.superduper.activities.After_Checkout;
-import com.zasa.superduper.Models.Daily_OperationModule_Model;
+import com.squareup.picasso.Picasso;
+import com.zasa.superduper.activities.Survey_Activity;
+import com.zasa.superduper.Models.Compaign_Module_Model;
 import com.zasa.superduper.R;
 
 import java.util.ArrayList;
 
-public class Daily_OperationModule_Adapter extends RecyclerView.Adapter<Daily_OperationModule_Adapter.viewHolder> {
-    ArrayList<Daily_OperationModule_Model> moduleList;
+public class Compaign_Adapter extends RecyclerView.Adapter<Compaign_Adapter.viewHolder> {
+    ArrayList<Compaign_Module_Model> moduleList;
     Context context;
 
-    public Daily_OperationModule_Adapter(ArrayList<Daily_OperationModule_Model> moduleList, Context context) {
+    public Compaign_Adapter(ArrayList<Compaign_Module_Model> moduleList, Context context) {
         this.moduleList = moduleList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public Daily_OperationModule_Adapter.viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Compaign_Adapter.viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.daily_operation_module_design,parent,false);
         return new viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Daily_OperationModule_Adapter.viewHolder holder, int position) {
-        Daily_OperationModule_Model model = moduleList.get(position);
+    public void onBindViewHolder(@NonNull Compaign_Adapter.viewHolder holder, int position) {
+        Compaign_Module_Model model = moduleList.get(position);
 
         holder.iv_module.setImageResource(model.getModuledPic());
         holder.txt_module.setText(model.getModule_name());
 
+        Picasso.get().load(model.getImage_url()).placeholder(R.drawable.bottles)
+                .into(holder.iv_module);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, After_Checkout.class);
+                Intent intent = new Intent(context, Survey_Activity.class);
                 context.startActivity(intent);
             }
         });

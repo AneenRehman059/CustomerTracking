@@ -7,30 +7,40 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import com.zasa.superduper.Adapters.Operation_Adapter;
-import com.zasa.superduper.Models.Opeartion_Model;
+import com.zasa.superduper.Adapters.Routes_Adapter;
+import com.zasa.superduper.ApiManager.RoutesAppManager;
+import com.zasa.superduper.Login.LoginActivity;
+import com.zasa.superduper.Models.Routes_Model;
+import com.zasa.superduper.MyCallBack;
 import com.zasa.superduper.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class OperationActivity extends AppCompatActivity {
+public class RoutesActivity extends AppCompatActivity implements MyCallBack {
     SharedPreferences sharedPreferences;
     private static final String SHARED_PREF_NAME = "mypref";
     private static final String KEY_DATE = "date";
     private static final String PREF_DATE = "prf_date";
-    ArrayList<Opeartion_Model> operationList = new ArrayList<>();
+    ArrayList<Routes_Model> operationList = new ArrayList<>();
     RecyclerView operation_rv;
 
     private int layout = 1;
+    String api_Token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operation);
+
+        getToken();
 
         /////// get current date and shared to splash activity and save in shared prefrence ////////
         sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
@@ -48,34 +58,34 @@ public class OperationActivity extends AppCompatActivity {
         String sharedpref_date = sharedPreferences.getString(PREF_DATE, null);
 
         if (current_date.equals(sharedpref_date)){
-//            Intent intent = new Intent(OperationActivity.this, HomeActivity.class);
-//            startActivity(intent);
-//            finish();
 
             getOperationList();
         }
-       else {
-            Intent intent = new Intent(OperationActivity.this, StartDay_Activity.class);
+        else {
+            Intent intent = new Intent(RoutesActivity.this, StartDay_Activity.class);
             startActivity(intent);
             finish();
         }
     }
 
+    private void getToken() {
+        SharedPreferences sharedPreferenc = getSharedPreferences(LoginActivity.PREFS_NAME, 0);
+        SharedPreferences.Editor editor1 = sharedPreferenc.edit();
+        api_Token = String.valueOf(editor1.putString("token_id",""));
+    }
+
     private void getOperationList() {
-        operationList.add(new Opeartion_Model("Gulberg","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Johar Town ","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Defense Phase I","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Mughal Pura","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("BaghbanPura","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Paragon City","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Lahore Cant","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
-        operationList.add(new Opeartion_Model("Model Town","59 A Rafaeam Society Malir Halt","Line 2 address","Last Purchase: 2 week ago"));
 
-        Operation_Adapter operation_adapter = new Operation_Adapter(operationList,this);
-        operation_rv.setAdapter(operation_adapter);
+        RoutesAppManager routesAppManager = new RoutesAppManager(this,this);
+        JSONObject routes_params = new JSONObject();
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        operation_rv.setLayoutManager(layoutManager);
+        try {
+            routes_params.put("token",api_Token);
+            routesAppManager.postRoutes(routes_params);
+        }
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String getCurrentDate() {
@@ -85,8 +95,25 @@ public class OperationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(OperationActivity.this, HomeActivity.class));
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+//        startActivity(new Intent(RoutesActivity.this, HomeActivity.class));
+//        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
+    }
+
+    @Override
+    public void notify(Object obj, String type) {
+        if (type.equalsIgnoreCase("routes")){
+            operationList = (ArrayList<Routes_Model>)obj;
+
+            Routes_Adapter operation_adapter = new Routes_Adapter(operationList,this);
+            operation_rv.setAdapter(operation_adapter);
+
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            operation_rv.setLayoutManager(layoutManager);
+        }
+        else
+        {
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        }
     }
 }

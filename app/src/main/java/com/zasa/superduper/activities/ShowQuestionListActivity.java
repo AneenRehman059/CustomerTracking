@@ -16,13 +16,13 @@ public class ShowQuestionListActivity extends AppCompatActivity {
 
     RecyclerView rv_showList;
     ArrayList<Question_Model> questionList;
+    public static Question_Adapter question_adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_question_list);
 
         rv_showList = findViewById(R.id.showQuesData_rv);
-
 
         questionList = (ArrayList<Question_Model>) getIntent().getSerializableExtra("myList");
 

@@ -21,6 +21,8 @@
     <color name="lightGray">#1D000000</color>
     <color name="iconsColor">#37474F</color>
 
+    <color name="colorText">#666666</color>
+    <color name="transparent">#00000000</color>
     <color name="app_color_green">#51c192</color>
     <color name="app_color_gold">#fbc482</color>
 

@@ -1,10 +1,11 @@
 package com.zasa.superduper.Models;
 
-public class Daily_OperationModule_Model {
+public class Compaign_Module_Model {
     int moduledPic;
     private String module_name;
+    private String image_url;
 
-    public Daily_OperationModule_Model(int moduledPic, String module_name) {
+    public Compaign_Module_Model(int moduledPic, String module_name) {
         this.moduledPic = moduledPic;
         this.module_name = module_name;
     }
@@ -23,5 +24,13 @@ public class Daily_OperationModule_Model {
 
     public void setModule_name(String module_name) {
         this.module_name = module_name;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 }

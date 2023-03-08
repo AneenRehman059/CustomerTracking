@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -36,17 +37,25 @@ public class TrackOperationPlaceActivity extends AppCompatActivity {
     SupportMapFragment smf;
     FusedLocationProviderClient client;
     Button btn_operation_on;
+    public static String route,routeId;
+    TextView txt_routes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_operation_place);
 
-        btn_operation_on =(Button) findViewById(R.id.btn_operationOn);
+        btn_operation_on = (Button) findViewById(R.id.btn_operationOn);
+        txt_routes = findViewById(R.id.tv_routes);
+        Intent intent = getIntent();
+//        route = intent.getExtras().getString("route_name");
+//        routeId = intent.getExtras().getString("routeID");
+        txt_routes.setText(route);
 
         btn_operation_on.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             openBottomDrawer();
+                openBottomDrawer();
             }
         });
 
@@ -95,20 +104,20 @@ public class TrackOperationPlaceActivity extends AppCompatActivity {
                 smf.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
-                        MarkerOptions markerOptions=new MarkerOptions().position(latLng).title("You are here...!!");
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("You are here...!!");
 
 //                        Toast.makeText(TrackOperationPlaceActivity.this, (int) location.getLatitude()+"\n"+location.getLongitude(), Toast.LENGTH_SHORT).show();
 
                         googleMap.addMarker(markerOptions);
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                     }
                 });
             }
         });
     }
 
-    public void openBottomDrawer(){
+    public void openBottomDrawer() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
         bottomSheetDialog.show(getSupportFragmentManager(), bottomSheetDialog.getTag());
     }

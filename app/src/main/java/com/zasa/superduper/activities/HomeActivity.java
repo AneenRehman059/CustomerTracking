@@ -11,8 +11,10 @@ import androidx.fragment.app.FragmentTransaction;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -23,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import com.zasa.superduper.CustomToastError;
 import com.zasa.superduper.Home.HomeFragment;
 import com.zasa.superduper.Profile.ProfileActivity;
 import com.zasa.superduper.R;
@@ -41,6 +44,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     TextView headerUsername, abUserName;
     DrawerLayout drawer;
     View header;
+    View view;
     Context context;
     CircleImageView userHeaderImage;
     int value;
@@ -63,6 +67,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         headerUsername = header.findViewById(R.id.tv_haader_name);
         progressBar = findViewById(R.id.progressbarId);
         text_id = findViewById(R.id.textid);
+        view = findViewById(android.R.id.content);
         abUserName = findViewById(R.id.ab_username);
 
         Thread thread = new Thread(new Runnable() {
@@ -71,8 +76,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 startProgress();
             }
         });
-        thread.start();
-
+        thread.start()
 
         bottomNavigationView.getMenu().getItem(2).setEnabled(false);
         fragments.add(new HomeFragment());
@@ -83,9 +87,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             if (item.getItemId() == R.id.home) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragments.get(0)).commit();
             } else if (item.getItemId() == R.id.operation) {
-                startActivity(new Intent(HomeActivity.this, OperationActivity.class));
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                finish();
+
+                if(isTimeAutomatic(HomeActivity.this)) {
+                    startActivity(new Intent(HomeActivity.this, RoutesActivity.class));
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    finish();
+                }
+                else{
+                    new CustomToastError().Show_Toast(HomeActivity.this, view, getString(R.string.error_msg));
+//                    Toast.makeText(HomeActivity.this, "Please set auto time in datetime setting", Toast.LENGTH_SHORT).show();
+                }
             } else if (item.getItemId() == R.id.setting) {
                 startActivity(new Intent(HomeActivity.this, SettingActivity.class));
                 overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -103,10 +114,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         transaction.replace(R.id.frame_layout, new HomeFragment());
         transaction.commit();
 
-        context = HomeActivity.this;
+//        context = HomeActivity.this;
 
     }
-
+    public static boolean isTimeAutomatic(Context c) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
     public void setupDrawer() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

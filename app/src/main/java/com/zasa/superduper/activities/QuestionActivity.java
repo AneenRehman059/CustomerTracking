@@ -10,6 +10,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,12 +23,15 @@ import android.widget.Button;
 import com.github.florent37.runtimepermission.RuntimePermission;
 import com.zasa.superduper.Adapters.AdapterShowImages;
 import com.zasa.superduper.Adapters.Question_Adapter;
+import com.zasa.superduper.ApiManager.QuestionsAppManager;
+import com.zasa.superduper.Login.LoginActivity;
 import com.zasa.superduper.Models.Question_Model;
-import com.zasa.superduper.Models.Scoring_Adapter;
 import com.zasa.superduper.MyCallBack;
 import com.zasa.superduper.MyFunctions;
 import com.zasa.superduper.R;
-import com.zasa.superduper.RecyclerItemClickListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -41,6 +45,7 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
     private final int REQUEST_CAMERA = 1234;
     private final int REQUEST_GALLERY = 5464;
     private static MyFunctions myFunctions;
+    String apiTokens;
 
     private static String imagePath = "";
     private ArrayList<String> arrayList = new ArrayList<>();
@@ -52,6 +57,10 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
+        SharedPreferences sharedPreferenc = getSharedPreferences(LoginActivity.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = sharedPreferenc.edit();
+        apiTokens = String.valueOf(editor.putString("token_id",""));
+
         questionsRv = findViewById(R.id.rv_question);
         btn_submit = findViewById(R.id.btn_submit);
 
@@ -60,25 +69,17 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
     }
 
     private void getQuestionList() {
-        questionList.add(new Question_Model("Pasta","text"));
-        questionList.add(new Question_Model("Spices","qr"));
-        questionList.add(new Question_Model("Salt","picture"));
-        questionList.add(new Question_Model("Sauces and Ketchup","text"));
-        questionList.add(new Question_Model("Snacks","qr"));
-        questionList.add(new Question_Model("Kurkure","picture"));
-        questionList.add(new Question_Model("Tea Table","text"));
-        questionList.add(new Question_Model("Honey and Spreads","qr"));
-        questionList.add(new Question_Model("Namkeen and Snacks","picture"));
-        questionList.add(new Question_Model("Tea Table","text"));
-        questionList.add(new Question_Model("Salt","qr"));
-        questionList.add(new Question_Model("Pasta","picture"));
-        questionList.add(new Question_Model("Pasta","qr"));
 
-        Question_Adapter question_adapter = new Question_Adapter(questionList, this,this);
-
-        questionsRv.setAdapter(question_adapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        questionsRv.setLayoutManager(layoutManager);
+        QuestionsAppManager questionsAppManager = new QuestionsAppManager(this,this);
+        JSONObject question_params = new JSONObject();
+        try {
+            question_params.put("token",apiTokens);
+            questionsAppManager.postQuestions(question_params);
+        }
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        questionsAppManager.postQuestions(new JSONObject());
 
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +88,6 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
                 Intent intent = new Intent(QuestionActivity.this,ShowQuestionListActivity.class);
                 intent.putExtra("myList", ((Question_Adapter) questionsRv.getAdapter()).getQuestionList());
                 startActivity(intent);
-
             }
         });
 
@@ -178,8 +178,25 @@ public class QuestionActivity extends AppCompatActivity implements MyCallBack {
     }
 
     @Override
-    public void notify(Object boj, String type) {
-        getImage();
+    public void notify(Object obj, String type) {
+
+        if(type.equalsIgnoreCase("questions")){
+
+            questionList = (ArrayList<Question_Model>)obj;
+
+            Question_Adapter question_adapter = new Question_Adapter(questionList, this,this);
+
+            questionsRv.setAdapter(question_adapter);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            questionsRv.setLayoutManager(layoutManager);
+
+        }
+        else
+        {
+            getImage();
+        }
+
+
     }
 
     @SuppressLint("StaticFieldLeak")

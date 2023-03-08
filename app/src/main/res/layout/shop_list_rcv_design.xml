@@ -29,12 +29,11 @@
                 android:textSize="@dimen/_12sdp"
                 android:textStyle="bold" />
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/store_name"
-                    android:id="@+id/channel_name"
+                    android:id="@+id/shop_description"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:text=""
                     android:textColor="@color/black" />
@@ -43,27 +42,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/store_name"
-                    android:layout_toRightOf="@id/channel_name"
+                    android:layout_toRightOf="@id/store_name"
                     android:padding="@dimen/_4sdp"
                     android:elevation="5dp"
                     android:src="@drawable/location_on_24"
                     android:layout_marginLeft="@dimen/_120sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/map_icon_bg"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/channel_name"
-                android:id="@+id/nearest_landmark"
-                android:text="" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/nearest_landmark"
-                android:id="@+id/contactt_number"
-                android:text="" />
 
 
         </RelativeLayout>

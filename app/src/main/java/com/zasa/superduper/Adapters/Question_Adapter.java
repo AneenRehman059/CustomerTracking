@@ -69,9 +69,9 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
     @Override
     public int getItemViewType(int position) {
 
-        if (questionList.get(position).getType().equalsIgnoreCase("text"))
+        if (questionList.get(position).getType().equalsIgnoreCase("Text"))
             return 1;
-        else if (questionList.get(position).getType().equalsIgnoreCase("picture"))
+        else if (questionList.get(position).getType().equalsIgnoreCase("Image"))
             return 2;
         else if (questionList.get(position).getType().equalsIgnoreCase("qr"))
             return 3;
@@ -106,7 +106,7 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
 
 //        holder.tv_question.setText(model.getQuestion_name());
 
-        if (questionList.get(position).getType().equalsIgnoreCase("text")) {
+        if (questionList.get(position).getType().equalsIgnoreCase("Text")) {
 
 
             ViewHolderText viewHolderText = (ViewHolderText) holder;
@@ -116,7 +116,8 @@ public class Question_Adapter extends RecyclerView.Adapter implements Question_A
 //            viewHolderText.ed_number.setTag(position);
             viewHolderText.ed_number.setText(model.getAnswer());
 
-        } else if (questionList.get(position).getType().equalsIgnoreCase("picture")) {
+
+        } else if (questionList.get(position).getType().equalsIgnoreCase("Image")) {
             PicViewHolder viewHolderPic = (PicViewHolder) holder;
             viewHolderPic.txt_categ.setText(model.getQuestion_name());
 

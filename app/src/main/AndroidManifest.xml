@@ -47,10 +47,10 @@
             android:name=".activities.QuestionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.After_Checkout"
+            android:name=".activities.Survey_Activity"
             android:exported="false" />
         <activity
-            android:name=".activities.CheckOut_Activity"
+            android:name=".activities.Compaign_Activity"
             android:exported="false" />
         <activity
             android:name=".activities.TrackOperationPlaceActivity"
@@ -91,7 +91,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activities.OperationActivity"
+            android:name=".activities.RoutesActivity"
             android:exported="false"
             android:theme="@style/NoActionBar">
             <meta-data
